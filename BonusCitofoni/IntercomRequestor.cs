@@ -1,9 +1,11 @@
-﻿namespace BonusCitofoni
+﻿using BonusCitofoni.Service;
+
+namespace BonusCitofoni
 {
-    internal class IntercomRequestor
+    public class IntercomRequestor
     {
 
-        IntercomBonusService intercomBonusService = new CoreIntercomBonusService(200000, 10, 2);
+        IntercomBonusService intercomBonusService = new MyIntercomService(200000, 1000, 3, 200);
         
 
         public async Task<IEnumerable<BonusResponse>> Run()

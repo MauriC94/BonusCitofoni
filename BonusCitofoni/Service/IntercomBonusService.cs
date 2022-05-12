@@ -8,6 +8,6 @@ namespace BonusCitofoni
 {
     public interface IntercomBonusService
     {
-            BonusResponse ProcessRequest(BonusRequest request);
+        BonusResponse ProcessRequest(BonusRequest request);
     }
 }

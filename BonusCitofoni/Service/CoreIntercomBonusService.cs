@@ -19,29 +19,19 @@
         public  BonusResponse ProcessRequest(BonusRequest request)
         {
 
-            try
-            {
-                VerifyIR(request);
-                VerifyAmount(request);
-                CheckBudget(request);
-                return new BonusResponse() { Request = request, Accepted = true };
-            }
-            catch (Exception e)
-            {
-                return new BonusResponse() { Request = request, Accepted = false, Reason = e.Message };
 
-            }
 
-            //if(!VerifyIR(request)) return new BonusResponse() { Request = request, Accepted = false , Reason="Sei troppo ricco!"};
-            //if (!VerifyAmount(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Vuoi troppi soldi!" };
-            //if (!CheckBudget(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Finito il budget" };
-            //return new BonusResponse() { Request = request, Accepted = true };
+            if (!VerifyIR(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Sei troppo ricco!" };
+            if (!VerifyAmount(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Vuoi troppi soldi!" };
+            if (!CheckBudget(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Finito il budget" };
+            //Console.WriteLine($"{request.Name}  {request.AmountRequested}  {_budget}");
+            return new BonusResponse() { Request = request, Accepted = true };
 
 
 
         }
 
-        protected virtual void CheckBudget(BonusRequest request)
+        protected virtual bool CheckBudget(BonusRequest request)
         {
              bool outcome = true;
             lock (this)
@@ -55,20 +45,11 @@
                 }
             }
             if (!outcome) throw new Exception("Finito il budget");
-            //return outcome;
+            return outcome;
 
         }
-        //protected virtual bool VerifyIR(BonusRequest request) => request.IR < _maxIR;
-        //protected virtual bool VerifyAmount(BonusRequest request) => request.AmountRequested < _maxAmount;
-        protected virtual void VerifyIR(BonusRequest request)
-        {
-            if (request.IR > _maxIR) throw new Exception("I soldi li devi dare tu a me");
-        }
-
-        protected virtual void VerifyAmount(BonusRequest request)
-        {
-            if (request.AmountRequested > _maxAmount) throw new Exception("Oh ma quanto costa sto citofono!!");
-        }
+        protected virtual bool VerifyIR(BonusRequest request) => request.IR < _maxIR;
+        protected virtual bool VerifyAmount(BonusRequest request) => request.AmountRequested < _maxAmount;
 
     }
 }
