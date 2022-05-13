@@ -24,7 +24,6 @@
             if (!VerifyIR(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Sei troppo ricco!" };
             if (!VerifyAmount(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Vuoi troppi soldi!" };
             if (!CheckBudget(request)) return new BonusResponse() { Request = request, Accepted = false, Reason = "Finito il budget" };
-            //Console.WriteLine($"{request.Name}  {request.AmountRequested}  {_budget}");
             return new BonusResponse() { Request = request, Accepted = true };
 
 

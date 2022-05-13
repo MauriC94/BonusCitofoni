@@ -7,11 +7,22 @@ using System.Threading.Tasks;
 
 namespace BonusCitofoni.Service
 {
-    public class MyIntercomService : CoreIntercomBonusService, IntercomBonusService
+    public class MyIntercomService : CoreIntercomBonusService
     {
+        private readonly static Lazy<MyIntercomService> _instance =
+        new(() => new MyIntercomService(200000, 1000, 3, 200));
+
+
+
+        public static MyIntercomService Instance
+        {
+            get { return _instance.Value; }
+        }
+
         private decimal _richMaxAmount;
         //private Dictionary<string, BonusRequest> _ibanRequest = new Dictionary<string, BonusRequest>();
         private ConcurrentDictionary<string,BonusRequest> _ibanRequest = new ConcurrentDictionary<string, BonusRequest>();
+
         public MyIntercomService(decimal budget, decimal maxAmount, int maxIR, decimal amountMaxiR) : base(budget, maxAmount, maxIR)
         {
             this._richMaxAmount = amountMaxiR;
@@ -44,16 +55,21 @@ namespace BonusCitofoni.Service
 
         protected override bool VerifyAmount(BonusRequest request)
         {
-            _ibanRequest.TryAdd(request.IBAN, request);
-
-            if (request.IR < this._maxIR)
+            if(_ibanRequest.TryAdd(request.IBAN, request))
             {
-                return request.AmountRequested < this._maxAmount;
+                if (request.IR < this._maxIR)
+                {
+                    return request.AmountRequested < this._maxAmount;
 
+                }
+                else
+                {
+                    return request.AmountRequested < _richMaxAmount;
+                }
             }
             else
             {
-                return request.AmountRequested < _richMaxAmount;
+                return false;
             }       
         }
 

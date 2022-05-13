@@ -4,15 +4,10 @@ namespace BonusCitofoni
 {
     public class IntercomRequestor
     {
-
-        IntercomBonusService intercomBonusService = new MyIntercomService(200000, 1000, 3, 200);
-        
-
         public async Task<IEnumerable<BonusResponse>> Run()
         {
             IEnumerable<BonusRequest> bonusRequests = CreateManyRequests();
             return await ProcessRequests(bonusRequests);
-
         }
 
 
@@ -21,7 +16,7 @@ namespace BonusCitofoni
             List<BonusResponse> responses = new List<BonusResponse>();
             for (int index = 0; index < bonusRequests.Count(); index += parallelism)
             {
-                var concurrentTasks = bonusRequests.Skip(index).Take(parallelism).Select(req => Task.Run(() => intercomBonusService.ProcessRequest(req)));
+                var concurrentTasks = bonusRequests.Skip(index).Take(parallelism).Select(req => Task.Run(() => MyIntercomService.Instance.ProcessRequest(req)));
                 var results = await Task.WhenAll(concurrentTasks);
                 responses.AddRange(results);
             }
